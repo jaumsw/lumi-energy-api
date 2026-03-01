@@ -1,4 +1,4 @@
-import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common'
+import { Injectable, OnModuleDestroy } from '@nestjs/common'
 import { PrismaClient } from '@prisma/client'
 import { PrismaPg } from '@prisma/adapter-pg'
 import { Pool } from 'pg'
@@ -6,7 +6,9 @@ import { Pool } from 'pg'
 @Injectable()
 export class PrismaService
   extends PrismaClient
-  implements OnModuleInit, OnModuleDestroy {
+  implements OnModuleDestroy {
+
+  private readonly pool: Pool
 
   constructor() {
     const pool = new Pool({
@@ -18,17 +20,11 @@ export class PrismaService
     super({
       adapter,
     })
-  }
 
-  async onModuleInit() {
-    await this.$connect()
-  }
-
-  async enableShutdownHooks() {
-    await this.$disconnect()
+    this.pool = pool
   }
 
   async onModuleDestroy() {
-    await this.$disconnect()
+    await this.pool.end()
   }
 }
