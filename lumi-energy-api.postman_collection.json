@@ -1,0 +1,298 @@
+{
+  "info": {
+    "_postman_id": "lumi-energy-api-collection",
+    "name": "Lumi Energy API",
+    "description": "Collection para a API Lumi Energy - Gerenciamento de faturas de energia elétrica",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Invoices",
+      "description": "Endpoints para gerenciamento de faturas",
+      "item": [
+        {
+          "name": "Upload de Fatura (PDF)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "",
+                  "description": "Arquivo PDF da fatura de energia (máx. 5MB)"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/invoices/upload",
+              "host": ["{{baseUrl}}"],
+              "path": ["invoices", "upload"]
+            },
+            "description": "Realiza o upload de uma fatura em PDF. O arquivo é processado via LLM para extração dos dados."
+          },
+          "response": [
+            {
+              "name": "Sucesso - Fatura processada",
+              "status": "Created",
+              "code": 201,
+              "body": "{\n  \"id\": \"cm...\",\n  \"numeroCliente\": \"7005400387\",\n  \"mesReferencia\": \"JAN/2025\",\n  \"energiaEletricaKwh\": 50,\n  \"energiaEletricaValor\": 44.93,\n  \"energiaSCEEEKwh\": 476,\n  \"energiaSCEEEValor\": 215.02,\n  \"energiaCompensadaKwh\": 476,\n  \"energiaCompensadaValor\": -215.02,\n  \"contribuicaoIlumPublica\": 49.43,\n  \"valorTotalFatura\": 94.36,\n  \"createdAt\": \"2026-02-25T12:00:00.000Z\"\n}"
+            },
+            {
+              "name": "Erro - Arquivo não enviado",
+              "status": "Bad Request",
+              "code": 400,
+              "body": "{\n  \"statusCode\": 400,\n  \"message\": \"File is required\",\n  \"error\": \"Bad Request\"\n}"
+            },
+            {
+              "name": "Erro - Arquivo não é PDF",
+              "status": "Bad Request",
+              "code": 400,
+              "body": "{\n  \"statusCode\": 400,\n  \"message\": \"Only PDF files are allowed\",\n  \"error\": \"Bad Request\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Listar Faturas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/invoices",
+              "host": ["{{baseUrl}}"],
+              "path": ["invoices"],
+              "query": [
+                {
+                  "key": "numeroCliente",
+                  "value": "7005400387",
+                  "description": "Filtrar por número do cliente",
+                  "disabled": true
+                },
+                {
+                  "key": "mesReferencia",
+                  "value": "JAN/2025",
+                  "description": "Filtrar por mês de referência (ex: JAN/2025)",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Lista todas as faturas. Pode filtrar por número do cliente e/ou mês de referência."
+          },
+          "response": [
+            {
+              "name": "Sucesso - Lista de faturas",
+              "status": "OK",
+              "code": 200,
+              "body": "[\n  {\n    \"id\": \"cm...\",\n    \"numeroCliente\": \"7005400387\",\n    \"mesReferencia\": \"JAN/2025\",\n    \"energiaEletricaKwh\": 50,\n    \"energiaEletricaValor\": 44.93,\n    \"energiaSCEEEKwh\": 476,\n    \"energiaSCEEEValor\": 215.02,\n    \"energiaCompensadaKwh\": 476,\n    \"energiaCompensadaValor\": -215.02,\n    \"contribuicaoIlumPublica\": 49.43,\n    \"valorTotalFatura\": 94.36,\n    \"createdAt\": \"2026-02-25T12:00:00.000Z\"\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Listar Faturas - Filtrar por Cliente",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/invoices?numeroCliente=7005400387",
+              "host": ["{{baseUrl}}"],
+              "path": ["invoices"],
+              "query": [
+                {
+                  "key": "numeroCliente",
+                  "value": "7005400387",
+                  "description": "Número do cliente"
+                }
+              ]
+            },
+            "description": "Lista faturas filtradas por número do cliente."
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Faturas - Filtrar por Mês",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/invoices?mesReferencia=JAN/2025",
+              "host": ["{{baseUrl}}"],
+              "path": ["invoices"],
+              "query": [
+                {
+                  "key": "mesReferencia",
+                  "value": "JAN/2025",
+                  "description": "Mês de referência (ex: JAN/2025)"
+                }
+              ]
+            },
+            "description": "Lista faturas filtradas por mês de referência."
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Faturas - Filtrar por Cliente e Mês",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/invoices?numeroCliente=7005400387&mesReferencia=JAN/2025",
+              "host": ["{{baseUrl}}"],
+              "path": ["invoices"],
+              "query": [
+                {
+                  "key": "numeroCliente",
+                  "value": "7005400387"
+                },
+                {
+                  "key": "mesReferencia",
+                  "value": "JAN/2025"
+                }
+              ]
+            },
+            "description": "Lista faturas filtradas por número do cliente e mês de referência simultaneamente."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Dashboard",
+      "description": "Endpoints para dados do dashboard",
+      "item": [
+        {
+          "name": "Resumo de Energia",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/dashboard/energia",
+              "host": ["{{baseUrl}}"],
+              "path": ["dashboard", "energia"],
+              "query": [
+                {
+                  "key": "cliente",
+                  "value": "7005400387",
+                  "description": "Número do cliente",
+                  "disabled": true
+                },
+                {
+                  "key": "dataInicio",
+                  "value": "2025-01-01",
+                  "description": "Data de início do período (YYYY-MM-DD)",
+                  "disabled": true
+                },
+                {
+                  "key": "dataFim",
+                  "value": "2025-12-31",
+                  "description": "Data de fim do período (YYYY-MM-DD)",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Retorna o resumo de energia (consumo, compensação etc.) para o dashboard. Suporta filtros por cliente e período."
+          },
+          "response": []
+        },
+        {
+          "name": "Resumo de Energia - Com Filtros",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/dashboard/energia?cliente=7005400387&dataInicio=2025-01-01&dataFim=2025-12-31",
+              "host": ["{{baseUrl}}"],
+              "path": ["dashboard", "energia"],
+              "query": [
+                {
+                  "key": "cliente",
+                  "value": "7005400387"
+                },
+                {
+                  "key": "dataInicio",
+                  "value": "2025-01-01"
+                },
+                {
+                  "key": "dataFim",
+                  "value": "2025-12-31"
+                }
+              ]
+            },
+            "description": "Retorna o resumo de energia filtrado por cliente e período."
+          },
+          "response": []
+        },
+        {
+          "name": "Resumo Financeiro",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/dashboard/financeiro",
+              "host": ["{{baseUrl}}"],
+              "path": ["dashboard", "financeiro"],
+              "query": [
+                {
+                  "key": "cliente",
+                  "value": "7005400387",
+                  "description": "Número do cliente",
+                  "disabled": true
+                },
+                {
+                  "key": "dataInicio",
+                  "value": "2025-01-01",
+                  "description": "Data de início do período (YYYY-MM-DD)",
+                  "disabled": true
+                },
+                {
+                  "key": "dataFim",
+                  "value": "2025-12-31",
+                  "description": "Data de fim do período (YYYY-MM-DD)",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Retorna o resumo financeiro (valores, economia etc.) para o dashboard. Suporta filtros por cliente e período."
+          },
+          "response": []
+        },
+        {
+          "name": "Resumo Financeiro - Com Filtros",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/dashboard/financeiro?cliente=7005400387&dataInicio=2025-01-01&dataFim=2025-12-31",
+              "host": ["{{baseUrl}}"],
+              "path": ["dashboard", "financeiro"],
+              "query": [
+                {
+                  "key": "cliente",
+                  "value": "7005400387"
+                },
+                {
+                  "key": "dataInicio",
+                  "value": "2025-01-01"
+                },
+                {
+                  "key": "dataFim",
+                  "value": "2025-12-31"
+                }
+              ]
+            },
+            "description": "Retorna o resumo financeiro filtrado por cliente e período."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

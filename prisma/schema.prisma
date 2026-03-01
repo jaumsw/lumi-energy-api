@@ -1,0 +1,42 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Invoice {
+  id                String   @id @default(uuid())
+  numeroCliente     String
+  mesReferencia     String
+  createdAt         DateTime @default(now())
+
+  energiaEletricaKwh        Float
+  energiaEletricaValor      Float
+
+  energiaSceeeKwh           Float
+  energiaSceeeValor         Float
+
+  energiaCompensadaKwh      Float
+  energiaCompensadaValor    Float
+
+  contribuicaoIlumPublica   Float
+
+  consumoEnergiaKwh         Float
+  energiaCompensadaFinalKwh Float
+  valorTotalSemGD           Float
+  economiaGD                Float
+
+  // Unicidade: uma fatura por cliente por mês
+  @@unique([numeroCliente, mesReferencia])
+
+  // Índice para listagem/filtro por cliente
+  @@index([numeroCliente])
+
+  // Índice para filtro de dashboard por data
+  @@index([createdAt])
+
+  // Índice composto para filtros combinados no dashboard
+  @@index([numeroCliente, createdAt])
+}
